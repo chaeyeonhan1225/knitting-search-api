@@ -1,5 +1,6 @@
 package com.lemonearthchoco.knittingsearchapi.service
 
+import com.lemonearthchoco.knittingsearchapi.domain.Pattern
 import org.apache.logging.log4j.util.Base64Util
 import org.bouncycastle.util.encoders.Base64Encoder
 import org.springframework.beans.factory.annotation.Value
@@ -48,6 +49,11 @@ class RavelryService(
         }
         println("result = $result")
         return result
+    }
+
+    fun findPatterns(): List<Pattern> {
+
+        return emptyList()
     }
 
     companion object {
