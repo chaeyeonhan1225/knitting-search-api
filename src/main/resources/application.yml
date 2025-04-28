@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: knitting-search-api
+  elasticsearch:
+    uris: http://localhost:9200
+
+access:
+  raverly:
+    client_id: ${client_id}
+    client_secret: ${client_secret}
