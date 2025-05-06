@@ -1,7 +1,7 @@
 package com.lemonearthchoco.knittingsearchapi.infrastructure.external.raverly
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lemonearthchoco.knittingsearchapi.domain.*
+import com.lemonearthchoco.knittingsearchapi.domain.pattern.*
 import java.math.BigDecimal
 
 data class PatternSearchResult(
@@ -33,52 +33,6 @@ data class PatternDetailSearchResult(
     val patterns: Map<String, PatternResult>
 )
 
-/**
- *  {
- *                     "id": 122126114,
- *                     "primary_pack_id": null,
- *                     "project_id": null,
- *                     "skeins": null,
- *                     "stash_id": null,
- *                     "total_grams": null,
- *                     "total_meters": null,
- *                     "total_ounces": null,
- *                     "total_yards": null,
- *                     "yarn_id": 205948,
- *                     "yarn_name": "Noro Madara",
- *                     "yarn_weight": {
- *                         "crochet_gauge": "",
- *                         "id": 1,
- *                         "knit_gauge": "18",
- *                         "max_gauge": null,
- *                         "min_gauge": null,
- *                         "name": "Aran",
- *                         "ply": "10",
- *                         "wpi": "8"
- *                     },
- *                     "colorway": null,
- *                     "shop_name": null,
- *                     "yarn": {
- *                         "permalink": "noro-madara",
- *                         "id": 205948,
- *                         "name": "Madara",
- *                         "yarn_company_name": "Noro",
- *                         "yarn_company_id": 15
- *                     },
- *                     "quantity_description": null,
- *                     "personal_name": null,
- *                     "dye_lot": null,
- *                     "color_family_id": null,
- *                     "grams_per_skein": null,
- *                     "yards_per_skein": null,
- *                     "meters_per_skein": null,
- *                     "ounces_per_skein": null,
- *                     "prefer_metric_weight": true,
- *                     "prefer_metric_length": false,
- *                     "shop_id": null,
- *                     "thread_size": null
- *                 }
- */
 data class PatternResult(
     val id: String,
     val name: String,
@@ -88,8 +42,8 @@ data class PatternResult(
     val commentsCount: Int,
     @JsonProperty("created_at")
     val createdAt: String,
-    val price: BigDecimal,
-    val currency: String,
+    val price: BigDecimal?,
+    val currency: String?,
     @JsonProperty("difficulty_average")
     val difficultyAverage: BigDecimal,
     @JsonProperty("difficulty_count")
@@ -97,71 +51,109 @@ data class PatternResult(
     @JsonProperty("favorites_count")
     val favoritesCount: Int,
     val free: Boolean,
-    val yardage: Int,
+    val photos: List<PatternPhoto>,
+
+    val packs: List<Pack>,
+    val yardage: Int?,
     @JsonProperty("yardage_max")
-    val yardageMax: Int,
+    val yardageMax: Int?,
     @JsonProperty("yarn_weight_description")
-    val yarnWeightDescription: String,
-    val gauge: BigDecimal,
+    val yarnWeightDescription: String?,
+    val gauge: BigDecimal?,
+    @JsonProperty("row_gauge")
+    val rowGauge: BigDecimal?,
     @JsonProperty("gauge_divisor")
     val gaugeDivisor: Int,
     @JsonProperty("gauge_pattern")
     val gaugePattern: String,
+    @JsonProperty("gauge_description")
+    val gaugeDescription: String,
     val notes: String,
-    val published: String,
+    val published: String?,
     @JsonProperty("rating_average")
     val ratingAverage: BigDecimal,
     @JsonProperty("rating_count")
     val ratingCount: Int,
-    @JsonProperty("pattern_needle_size")
-    val patternNeedleSize: List<NeedleDetail>?
+    @JsonProperty("pattern_needle_sizes")
+    val patternNeedleSizes: List<NeedleDetail>?,
+    val languages: List<PatternSupportedLauguage>
 ) {
     fun toDomain() = Pattern(
         id = "raverly:$id",
         name = name,
         designer = patternAuthor.name,
-        detail = notes,
-        needles = patternNeedleSize?.map {
+        imageUrl = photos.firstOrNull()?.imageUrl,
+//        detail = notes,
+        detail = "",
+        needles = patternNeedleSizes?.map {
             Needle(
-                id = "raverly:needles:$id",
-                name = name
+                id = "raverly:needles:${it.id}",
+                name = it.name,
+                metric = it.metric
             )
         } ?: emptyList(),
-        gauges = listOf(),
+        gauges = GaugeDetail(
+            gauge = Gauge(
+                stitches = gauge,
+                rows = rowGauge,
+                divisor = gaugeDivisor,
+            ),
+            pattern = gaugePattern,
+            description = gaugeDescription
+        ),
         price = when (free) {
             true -> Money.free
             false -> Money(
-                price,
-                currency
+                price ?: BigDecimal.ZERO,
+                currency ?: "USD"
             )
         },
-        yarn = Yarn(
-            yardage = Yardage(
-                yardage,
-                yardageMax
-            ),
-            weight = yarnWeightDescription
+        yarns = YarnDetail(
+            yarns = packs.map {
+                Yarn(
+                    id = "raverly:yarn:${it.id}",
+                    name = it.name ?: "unknown",
+                    crochetGauge = it.yarnWeight?.crochetGauge,
+                    knitGauge = it.yarnWeight?.knitGauge,
+                    ply = it.yarnWeight?.ply,
+                    wpi = it.yarnWeight?.wpi,
+                )
+            },
+            yardage = Yardage(yardage ?: 0, yardageMax ?: 0),
+            weight = yarnWeightDescription ?: ""
         ),
-        languages = listOf()
+        languages = languages.map { it.code }
     )
 }
 
-/**
- *  {
- *                     "id": 6,
- *                     "us": "6 ",
- *                     "metric": 4.0,
- *                     "us_steel": null,
- *                     "crochet": false,
- *                     "knitting": true,
- *                     "hook": "G",
- *                     "name": "US 6  - 4.0 mm",
- *                     "pretty_metric": "4"
- *                 },
- */
+data class Pack(
+    val id: Long,
+    @JsonProperty("yarn_name")
+    val name: String?,
+    @JsonProperty("yarn_weight")
+    val yarnWeight: YarnWeight?
+)
+
+data class YarnWeight(
+    val crochetGauge: String?,
+    val knitGauge: String?,
+    val name: String?,
+    val ply: String?,
+    val wpi: String?
+)
+
 data class NeedleDetail(
     val id: Long,
     val name: String,
-    val us: String,
+    val us: String?,
     val metric: BigDecimal,
+)
+
+data class PatternPhoto(
+    @JsonProperty("square_url")
+    val imageUrl: String
+)
+
+data class PatternSupportedLauguage(
+    val code: String
 )

@@ -13,7 +13,10 @@ class RavelryClientConfig(
      fun apply(): RequestInterceptor = RequestInterceptor { template ->
         val credentialCode = "$clientId:$clientSecret".trim()
         val encodedCredentials = Base64.getEncoder().withoutPadding().encodeToString(credentialCode.toByteArray())
-        println("credentialCode = $credentialCode, encodedCredentials = $encodedCredentials")
         template?.header("Authorization", "Basic $encodedCredentials")
+
+        // 내부에서 사용될 API이므로 +는 escape 되지 않도록 수정
+        val newUrl = template.url().replace("%2B", "+")
+        template?.uri(newUrl)
     }
 }

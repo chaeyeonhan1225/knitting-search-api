@@ -1,4 +1,4 @@
-package com.lemonearthchoco.knittingsearchapi.domain
+package com.lemonearthchoco.knittingsearchapi.domain.pattern
 
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 

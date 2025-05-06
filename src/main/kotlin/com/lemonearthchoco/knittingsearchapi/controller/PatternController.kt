@@ -1,6 +1,6 @@
 package com.lemonearthchoco.knittingsearchapi.controller
 
-import com.lemonearthchoco.knittingsearchapi.domain.Pattern
+import com.lemonearthchoco.knittingsearchapi.domain.pattern.Pattern
 import com.lemonearthchoco.knittingsearchapi.service.PatternSearchUseCase
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
