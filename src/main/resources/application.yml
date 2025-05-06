@@ -6,5 +6,6 @@ spring:
 
 access:
   raverly:
+    base_url: ${base_url:https://api.ravelry.com}
     client_id: ${client_id}
     client_secret: ${client_secret}
