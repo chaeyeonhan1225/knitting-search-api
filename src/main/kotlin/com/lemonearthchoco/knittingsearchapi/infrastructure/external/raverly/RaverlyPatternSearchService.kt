@@ -34,5 +34,4 @@ class RaverlyPatternSearchService(
 
 
     fun findPatternDetail(ids: List<String>): PatternDetailSearchResult = ravelryClient.findPatternDetailsByIds(ids.joinToString("+"))
-
 }

@@ -63,11 +63,11 @@ data class PatternResult(
     @JsonProperty("row_gauge")
     val rowGauge: BigDecimal?,
     @JsonProperty("gauge_divisor")
-    val gaugeDivisor: Int,
+    val gaugeDivisor: Int?,
     @JsonProperty("gauge_pattern")
-    val gaugePattern: String,
+    val gaugePattern: String?,
     @JsonProperty("gauge_description")
-    val gaugeDescription: String,
+    val gaugeDescription: String?,
     val notes: String,
     val published: String?,
     @JsonProperty("rating_average")
@@ -96,7 +96,7 @@ data class PatternResult(
             gauge = Gauge(
                 stitches = gauge,
                 rows = rowGauge,
-                divisor = gaugeDivisor,
+                divisor = gaugeDivisor ?: 1,
             ),
             pattern = gaugePattern,
             description = gaugeDescription
