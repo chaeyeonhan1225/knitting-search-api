@@ -16,6 +16,9 @@ class PatternSearchElRepository(
             it.should { s -> s.match { m -> m.field("name").query(keyword) }}
             it.should { s -> s.match { m -> m.field("designer").query(keyword) }}
             it.should { s -> s.match { m -> m.field("detail").query(keyword) }}
+//            it.should { s -> s.nested { n -> n.path("needles").query { q ->
+//                q.match { m -> m.field("name").query(keyword) }
+//            }}}
         }
 
         val query = NativeQuery.builder().withQuery(boolQuery).build()

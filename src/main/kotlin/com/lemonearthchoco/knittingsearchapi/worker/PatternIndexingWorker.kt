@@ -1,15 +1,15 @@
 package com.lemonearthchoco.knittingsearchapi.worker
 
-import com.lemonearthchoco.knittingsearchapi.service.IndexingService
+import com.lemonearthchoco.knittingsearchapi.service.PatternIndexingService
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
 @Component
 class PatternIndexingWorker(
-    private val indexingService: IndexingService
+    private val patternIndexingService: PatternIndexingService
 ) {
-    @Scheduled(fixedRate = 5 * 60 * 1000)  // 5분 마다 실행
+    @Scheduled(fixedRate = 1 * 60 * 1000)  // 5분 마다 실행
     fun indexingPatterns() {
-        indexingService.indexingPatternsBulk()
+        patternIndexingService.indexingPatternsBulk()
     }
 }

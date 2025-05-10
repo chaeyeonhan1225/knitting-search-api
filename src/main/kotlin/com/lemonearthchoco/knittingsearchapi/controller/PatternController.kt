@@ -1,7 +1,7 @@
 package com.lemonearthchoco.knittingsearchapi.controller
 
 import com.lemonearthchoco.knittingsearchapi.domain.pattern.Pattern
-import com.lemonearthchoco.knittingsearchapi.service.IndexingService
+import com.lemonearthchoco.knittingsearchapi.service.PatternIndexingService
 import com.lemonearthchoco.knittingsearchapi.service.PatternSearchUseCase
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/knitting/patterns")
 class PatternController(
     private val patternSearchService: PatternSearchUseCase,
-    private val indexingService: IndexingService
+    private val patternIndexingService: PatternIndexingService
 ) {
     @GetMapping("/search")
     fun search(@RequestParam("query") query: String): List<Pattern> {
@@ -21,7 +21,7 @@ class PatternController(
 
     @GetMapping("/searchkeywords")
     fun findKeywords(): String {
-        indexingService.indexingPatternsBulk()
+        patternIndexingService.indexingPatternsBulk()
         return "success"
     }
 }
