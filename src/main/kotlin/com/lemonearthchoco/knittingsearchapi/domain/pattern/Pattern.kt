@@ -1,8 +1,10 @@
 package com.lemonearthchoco.knittingsearchapi.domain.pattern
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.springframework.data.elasticsearch.annotations.Document
 import java.math.BigDecimal
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Document(indexName = "pattern")
 data class Pattern(
     val id: String,
@@ -15,7 +17,14 @@ data class Pattern(
     val price: Money = Money.free,
     val yarns: YarnDetail? = null,
     val languages: List<String> = listOf()
-)
+) {
+    constructor(): this(
+        id = "",
+        name= "",
+        imageUrl = null,
+        designer = ""
+    )
+}
 
 data class Needle(
     val id: String,
